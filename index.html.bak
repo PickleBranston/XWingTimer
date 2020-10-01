@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<title> X-Wing Timer</title>
+		<script>!window.jQuery && document.write('<script src="jquery-1.9.1.js"><\/script>')</script>
+		<script>
+window.onbeforeunload = function (e) {      
+  return 'Are You Sure?';
+};
+
+a=new AudioContext()
+function beep(vol, freq, duration){
+  v=a.createOscillator()
+  u=a.createGain()
+  v.connect(u)
+  v.frequency.value=freq
+  v.type="square"
+  u.connect(a.destination)
+  u.gain.value=vol*0.01
+  v.start(a.currentTime)
+  v.stop(a.currentTime+duration*0.001)
+}
+
+var x;
+
+function timer(length){
+	clearInterval(x);
+	var options = document.getElementById("options");
+    options.style.display = "none";
+	
+	if(length=='standard'){
+		var countDownDate = new Date().getTime()+4510000;
+	}else{
+		var countDownDate = new Date().getTime()+7210000;
+	}
+	
+	// Update the count down every 1 second
+	x = setInterval(function() {
+		// Get today's date and time
+		var now = new Date().getTime();
+
+		// Find the distance between now and the count down date
+		var distance = countDownDate - now;
+
+		// Time calculations for days, hours, minutes and seconds
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		if(seconds<10){
+			seconds = "0"+seconds;
+		}
+		if(minutes<10){
+			minutes = "0"+minutes;
+		}
+		if(hours<10){
+			hours = "0"+hours;
+		}
+
+		// Display the result in the element with id="deadline"
+		if (distance > 0){
+			document.getElementById("deadline").innerHTML = hours + ":"  + minutes + ":" + seconds;
+		}else{
+			document.getElementById("deadline").innerHTML = "00:00:00";
+			options.style.display = "block";
+			clearInterval(x);			
+		}
+		
+		var rounded = Math.floor(distance/1000);
+		
+		//start beeps
+		if(length=='standard'){
+			if(rounded==4503 || rounded==4502 || rounded==4501){//start
+				beep(20, 2000, 100);
+			}else if(rounded==4500){//start
+				beep(20, 2000, 1000);
+			}		
+		}else{
+			if(rounded==7203 || rounded==7202 || rounded==7201){//start
+				beep(20, 2000, 100);
+			}else if(rounded==7200){//start
+				beep(20, 2000, 1000);
+			}
+		}
+	
+		
+		
+		if(rounded==6300 || rounded==5400 || rounded==4500 || rounded==3600 || rounded==2700 || rounded==1800 || rounded==900){//15s
+			beep(20, 2000, 250);
+		}else if(rounded==600){//warning
+			beep(20, 2000, 1000);
+		}else if(rounded==0){//end
+			beep(20, 2000, 1000);
+		}else if(rounded==1 || rounded==2 || rounded==3 || rounded==4 || rounded==5 || rounded==6 || rounded==7 || rounded==8 || rounded==9 || rounded==10 || rounded==30|| rounded==60){
+			beep(20, 2000, 50);
+		}
+		
+		if(distance < 0){
+			var red = 100;
+			var green = 50;
+			var blue = 50;
+		}else{
+			var red = 50;
+			var green = 100;
+			var blue = 50;
+		}
+				
+		if(distance<1000000 && distance>0){
+			green = Math.floor(50 + (distance/20000),0);
+			red = 100;
+		}else if(distance<2000000 && distance>1000000){
+			red = Math.floor(100 - ((distance-1000000)/20000),0);
+		}
+
+		document.body.style.backgroundColor = "rgba("+red+", "+green+", "+blue+", 1)";
+	}, 1000);
+}
+		</script>
+		<style>
+		body {
+		  background-color: rgba(150, 150, 150, 1);
+		  width: 100%;
+		  height: 100%;
+		  padding: 0px;
+		  margin: 0px;
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: center;
+		  align-items: center;
+		}
+
+		h1 {
+		  color: #111;
+		  font: 22vw sans-serif;
+		  font-weight: bold;
+		  text-align: center;
+		  padding: 0px;
+		  margin: 0px;
+		}
+		button{
+			font-size: 3vw;
+			padding: 1vw;
+			border: 0;
+			border-radius: 3px;
+			min-width: 15vw;
+			margin: 1vh;
+		}
+		#options(
+		display: none;
+		}
+		</style>
+		
+	</head>
+	<body>
+		<h1 id="deadline"></h1>
+		<div id="options">
+			<button onclick="timer('standard')">standard</button>
+			<button onclick="timer('final')">final</button>
+		</div>
+	</body>
+</html>
