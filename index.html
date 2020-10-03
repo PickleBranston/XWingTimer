@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-179563089-1"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'UA-179563089-1');
+		</script>
+
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="keywords" content="X Wing, countdown, timer, X-Wing, tournament">
 		<meta property="og:title" content="X-Wing Timer">
 		<meta property="og:url" content="https://picklebranston.github.io/XWingTimer/">
 		<meta property="og:description" content="Standard and final tournement length countdown timers for use while playing X-Wing Miniatures Game.">
-		<title> X-Wing Timer</title>
+		<title>X-Wing Timer</title>
 		<script>
 window.onbeforeunload = function (e) {      
   return 'Are You Sure?';
@@ -27,17 +37,33 @@ function beep(vol, freq, duration){
 }
 
 var x;
+var distance;
+
+function pause(){
+	clearInterval(x);
+	var pause = document.getElementById("pause");
+	var play = document.getElementById("play");
+    pause.style.display = "none";
+    play.style.display = "block";
+}
 
 function timer(length){
 	clearInterval(x);
 	var options = document.getElementById("options");
+	var pause = document.getElementById("pause");
+	var play = document.getElementById("play");
     options.style.display = "none";
+    pause.style.display = "block";
+    play.style.display = "none";
 	
 	if(length=='standard'){
-		var countDownDate = new Date().getTime()+4510000;
-	}else{
-		var countDownDate = new Date().getTime()+7210000;
+		distance = 4510000;
+		document.getElementById("deadline").innerHTML = "01:15:10";
+	}else if(length=='final'){
+		distance = 7210000;
+		document.getElementById("deadline").innerHTML = "02:00:10";
 	}
+	var countDownDate = new Date().getTime()+distance;	
 	
 	// Update the count down every 1 second
 	x = setInterval(function() {
@@ -45,7 +71,7 @@ function timer(length){
 		var now = new Date().getTime();
 
 		// Find the distance between now and the count down date
-		var distance = countDownDate - now;
+		distance = countDownDate - now;
 
 		// Time calculations for days, hours, minutes and seconds
 		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -68,6 +94,7 @@ function timer(length){
 		}else{
 			document.getElementById("deadline").innerHTML = "00:00:00";
 			options.style.display = "block";
+			pause.style.display = "none";
 			clearInterval(x);			
 		}
 		
@@ -146,7 +173,7 @@ function timer(length){
 		  padding: 0px;
 		  margin: 0px;
 		}
-		button{
+		button.options{
 			font-size: 3vw;
 			padding: 1vw;
 			border: 0;
@@ -154,14 +181,33 @@ function timer(length){
 			min-width: 15vw;
 			margin: 1vh;
 		}
+		
+		button.pause{
+			font-size: 3vw;
+			margin: 0;
+			padding: 0;
+			background-color: rgba(255, 255, 255, 0.2);
+			width: 2em;
+			height: 2em;
+			border-radius: 2em;
+			border: 0;
+			display: none;			
+		}
+		
+		button.pause:hover{
+			background-color: rgba(255, 255, 255, 0.5);
+		
+		}
 		</style>
 		
 	</head>
 	<body>
 		<h1 id="deadline"></h1>
 		<div id="options">
-			<button onclick="timer('standard')">standard</button>
-			<button onclick="timer('final')">final</button>
+			<button onclick="timer('standard')" class="options">standard</button>
+			<button onclick="timer('final')" class="options">final</button>
 		</div>
+		<button class="pause" id="pause" onclick="pause()" >  &#10074&#10074 </button>
+		<button class="pause" id="play" onclick="timer('0')" > &#9658 </button>
 	</body>
 </html>
